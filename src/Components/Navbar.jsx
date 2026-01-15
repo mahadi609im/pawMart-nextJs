@@ -41,6 +41,14 @@ const Navbar = () => {
               Pets & Supplies
             </Link>
           </li>
+          <li>
+            <Link
+              className="hover:text-orange-500 transition-colors"
+              href="/contact"
+            >
+              Contact us
+            </Link>
+          </li>
 
           {user && (
             <>
@@ -129,6 +137,13 @@ const Navbar = () => {
             className="text-lg text-white"
           >
             Pets & Supplies
+          </Link>
+          <Link
+            onClick={() => setOpen(false)}
+            href="/contact"
+            className="text-lg text-white"
+          >
+            Contact us
           </Link>
           <hr className="border-white/10" />
           {user ? (

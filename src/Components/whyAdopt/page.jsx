@@ -75,7 +75,7 @@ const WhyAdopt = () => {
 
           {/* Right Side: Visual Element */}
           <div className="lg:w-1/2 relative">
-            <div className="relative z-10 rounded-2xl overflow-hidden border-2 border-dashed border-[#fb7b53] p-4 bg-gray-50 dark:bg-slate-900 shadow-2xl transition-colors duration-300">
+            <div className="relative z-10 rounded-2xl overflow-hidden border-2 border-dashed border-[#fb7b53] p-4 bg-slate-900/20 shadow-2xl transition-colors duration-300">
               <img
                 src="https://images.unsplash.com/photo-1551730459-92db2a308d6a?q=80&w=1000&auto=format&fit=crop"
                 alt="Happy Adopted Dog"
@@ -83,17 +83,16 @@ const WhyAdopt = () => {
               />
 
               {/* Floating Status Card */}
-              <div className="absolute bottom-10 left-10 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-xl border-l-4 border-[#fb7b53] transform hover:scale-105 transition-transform">
+              <div className="absolute bottom-10 left-10 bg-slate-900 p-6 rounded-xl shadow-xl border-l-4 border-[#fb7b53] transform hover:scale-105 transition-transform">
                 <p className="text-[#fb7b53] font-bold text-2xl">2,500+</p>
                 <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">
                   Pets Adopted Yearly
                 </p>
               </div>
             </div>
-
             {/* Decorative Glow Elements */}
             <div className="absolute -top-10 -right-10 w-64 h-64 bg-[#fb7a5320] rounded-full blur-[80px] -z-0"></div>
-            <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] -z-0"></div>
+            <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-orange-500/10 rounded-full blur-[60px] -z-0"></div>
           </div>
         </div>
       </div>

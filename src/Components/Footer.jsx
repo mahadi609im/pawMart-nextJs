@@ -4,8 +4,16 @@ import Image from 'next/image';
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
 import { MdEmail, MdLocationOn, MdPhone } from 'react-icons/md';
 import pawWhite from '@/assets/pawWhite.png'; // adjust your path
+import Link from 'next/link';
 
 const Footer = () => {
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Shop', path: '/pets' },
+    { name: 'Terms', path: '/terms' },
+    { name: 'Contact', path: '/contact' },
+  ];
+
   return (
     <div className="text-gray-800 bg-[#fb7b53]">
       {/* Footer Main Section */}
@@ -33,11 +41,16 @@ const Footer = () => {
         <div>
           <h4 className="text-lg font-bold mb-3 text-gray-900">Pages</h4>
           <ul className="space-y-2 text-gray-700">
-            <li className="hover:text-orange-600 cursor-pointer">Home</li>
-            <li className="hover:text-orange-600 cursor-pointer">About Us</li>
-            <li className="hover:text-orange-600 cursor-pointer">Terms</li>
-            <li className="hover:text-orange-600 cursor-pointer">Contact</li>
-            <li className="hover:text-orange-600 cursor-pointer">Shop</li>
+            {navLinks.map((l, i) => (
+              <li key={i}>
+                <Link
+                  href={l.path}
+                  className="hover:text-orange-600 transition-colors cursor-pointer block"
+                >
+                  {l.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -46,13 +59,13 @@ const Footer = () => {
           <h4 className="text-lg font-bold mb-3 text-gray-900">Contact info</h4>
           <ul className="space-y-2 text-gray-700">
             <li className="flex items-center gap-2">
-              <MdLocationOn /> California L.A 57867
+              <MdLocationOn /> Gazipur, Dhaka, Bangladesh
             </li>
             <li className="flex items-center gap-2">
-              <MdPhone /> (808) 555-0111
+              <MdPhone /> (+880) 1609 216725
             </li>
             <li className="flex items-center gap-2">
-              <MdEmail /> 0Vw5f@example.com
+              <MdEmail /> maha609im@gmail.com
             </li>
           </ul>
         </div>

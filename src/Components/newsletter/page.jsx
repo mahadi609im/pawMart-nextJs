@@ -22,7 +22,7 @@ const Newsletter = () => {
   return (
     <section className="py-10 bg-black">
       <div className="max-w-5xl mx-auto px-6">
-        <div className="relative overflow-hidden rounded-3xl border border-dashed border-[#fb7b53] bg-slate-900/30 p-8 md:p-16">
+        <div className="relative overflow-hidden rounded-3xl border border-dashed border-[#fb7b53] bg-slate-900/20 p-8 md:p-16">
           {/* Background Decorative Elements */}
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#fb7a5315] rounded-full blur-3xl"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#fb7a5315] rounded-full blur-3xl"></div>

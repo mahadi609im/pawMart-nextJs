@@ -40,7 +40,7 @@ const Login = () => {
         setUser(result.user);
         toast.success('Login successfully');
         e.target.reset();
-        router.push('/');
+        router.push('/pets');
       })
       .catch(err => {
         let message = '';
@@ -59,7 +59,7 @@ const Login = () => {
       .then(result => {
         setUser(result.user);
         toast.success('Google SignIn successfully');
-        router.push('/');
+        router.push('/pets');
       })
       .catch(error => toast.error(error.message));
   };

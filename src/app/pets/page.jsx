@@ -10,8 +10,17 @@ const PetSupplies = () => {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // 🔹 Fetch all pets from backend
+  // ক্যাটাগরির লিস্ট (আপনার ডাটাবেজ অনুযায়ী এগুলো পরিবর্তন করতে পারেন)
+  const categories = [
+    'All',
+    'Pets (Adoption)',
+    'Accessories',
+    'Pet Care Products',
+    'Pet Food',
+  ];
+
   useEffect(() => {
     fetch('https://paw-mart-server-smoky.vercel.app/listings')
       .then(res => res.json())
@@ -22,79 +31,117 @@ const PetSupplies = () => {
       .catch(() => setLoading(false));
   }, []);
 
-  // 🔹 Filter pets using search
-  const filteredPets = pets.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 🔹 সার্চ এবং ক্যাটাগরি উভয় ফিল্টার একসাথে কাজ করবে
+  const filteredPets = pets.filter(item => {
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === 'All' || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
-    <section className="py-10 mb-20">
+    <section className="py-10 mb-20 min-h-screen">
       <div className="container mx-auto px-[3%] md:px-0">
         <header className="mb-10">
           <SectionBanner />
         </header>
 
-        <div className="conCls">
-          <div className="flex flex-col justify-center items-center mb-8 space-y-4">
-            <div className="flex justify-center items-center">
-              <h3 className="text-lg font-bold text-[#fb7b53] items-center gap-2 relative inline-block">
+        <div className="flex flex-col items-center mb-12 space-y-6">
+          <div className="text-center">
+            <div className="relative inline-block">
+              <h3 className="text-lg font-bold text-[#fb7b53] mb-2">
                 Pet & Supplies
-                <Image
-                  src={paw2}
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="absolute -top-3 -right-5"
-                />
               </h3>
+              <Image
+                src={paw2}
+                alt="paw"
+                width={24}
+                height={24}
+                className="absolute -top-3 -right-6"
+              />
             </div>
-
-            <h2 className="titleFont text-slate-950 dark:text-slate-100 text-3xl md:text-4xl text-center font-bold">
+            <h2 className="titleFont text-slate-950 dark:text-slate-100 text-3xl md:text-5xl font-bold">
               Explore All Pets & Supplies
             </h2>
-
-            <div className="relative w-full md:w-1/3 mb-4">
-              <input
-                type="search"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className="border border-dashed border-[#fb7b53] rounded-lg px-4 py-2 w-full focus:outline-none text-slate-950 dark:text-slate-100 bg-transparent relative z-20"
-              />
-
-              {!searchTerm && (
-                <span className="absolute left-4 top-2 text-slate-600 pointer-events-none z-10">
-                  Search by name...
-                </span>
-              )}
-            </div>
           </div>
 
-          {/* 🔹 Loading Spinner */}
-          {loading ? (
-            <h3>Loading...</h3>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPets.length > 0 ? (
-                filteredPets.map(item => (
-                  <ListingCard key={item._id} item={item} />
-                ))
-              ) : (
-                <div className="text-center text-[#fb7b53] font-semibold col-span-full">
-                  <h3 className="text-lg font-semibold text-[#fb7b53] relative inline-block mx-auto">
-                    No pets found for {searchTerm}
-                    <Image
-                      src={paw2}
-                      alt="paw"
-                      width={24}
-                      height={24}
-                      className="absolute -top-3 -right-5"
-                    />
-                  </h3>
-                </div>
-              )}
+          {/* 🔍 সার্চ এবং ফিল্টার সেকশন */}
+          <div className="w-full max-w-4xl flex flex-col md:flex-row gap-4 items-center justify-center bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-gray-200 dark:border-gray-800">
+            {/* সার্চ ইনপুট */}
+            <div className="relative w-full md:w-1/2">
+              <input
+                type="text"
+                placeholder="Search by name..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="w-full border border-dashed border-[#fb7b53] rounded-xl px-5 py-3 focus:outline-none bg-transparent text-slate-950 dark:text-slate-100"
+              />
             </div>
-          )}
+
+            {/* ক্যাটাগরি ড্রপডাউন */}
+            <div className="w-full md:w-1/3">
+              <select
+                value={selectedCategory}
+                onChange={e => setSelectedCategory(e.target.value)}
+                className="w-full border border-dashed border-[#fb7b53] rounded-xl px-5 py-3 focus:outline-none bg-transparent text-slate-950 dark:text-slate-100 cursor-pointer appearance-none"
+              >
+                {categories.map(cat => (
+                  <option
+                    key={cat}
+                    value={cat}
+                    className="bg-white dark:bg-black"
+                  >
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
+
+        {/* 🔹 লজিক্যাল রেন্ডারিং */}
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <span className="loading loading-spinner loading-lg text-orange-500"></span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {filteredPets.length > 0 ? (
+              filteredPets.map(item => (
+                <ListingCard key={item._id} item={item} />
+              ))
+            ) : (
+              <div className="text-center col-span-full py-20">
+                <div className="relative inline-block">
+                  <h3 className="text-2xl font-semibold text-[#fb7b53]">
+                    No items found for "{searchTerm}" in {selectedCategory}
+                  </h3>
+                  <Image
+                    src={paw2}
+                    alt="paw"
+                    width={30}
+                    height={30}
+                    className="absolute -top-5 -right-8"
+                  />
+                </div>
+                <p className="text-gray-500 mt-2">
+                  Try adjusting your filters or search term.
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory('All');
+                  }}
+                  className="mt-5 text-orange-500 underline"
+                >
+                  Reset All Filters
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );
