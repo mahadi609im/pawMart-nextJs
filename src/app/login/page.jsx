@@ -66,17 +66,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-20 relative">
-      {/* Background */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={loginBg}
-          alt="Background"
-          fill
-          className="object-cover"
-          priority
-        />
-      </div>
-
       {/* Form Container */}
       <div className="relative z-10 bg-white rounded-xl shadow-lg p-10 max-w-md w-full">
         {/* Header */}

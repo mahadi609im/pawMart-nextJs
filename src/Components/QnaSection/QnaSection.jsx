@@ -38,7 +38,7 @@ const QnaSection = () => {
   };
 
   return (
-    <section className="py-16 bg-white dark:bg-slate-900">
+    <section className="py-10 bg-black">
       <div className="conCls">
         {/* Heading */}
         <div className="max-w-4xl mx-auto text-left">

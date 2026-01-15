@@ -76,10 +76,6 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-20 relative">
-      <div className="absolute inset-0 z-0">
-        <Image src={loginBg} alt="Background" fill className="object-cover" />
-      </div>
-
       <div className="relative z-10 bg-white rounded-xl shadow-lg p-10 max-w-md w-full">
         <div className="mb-8 text-center">
           <h3 className="text-base font-bold text-[#fb7b53] relative inline-block">

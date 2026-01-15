@@ -58,10 +58,7 @@ const AddListingsForm = () => {
 
   return (
     <PrivateRoutes>
-      <div
-        className="relative min-h-screen py-20 mt-12"
-        style={{ backgroundImage: `url(${listingsFormBg.src})` }}
-      >
+      <div className="relative min-h-screen py-20 mt-12">
         <Head>
           <title>Add Listings | pawMart</title>
         </Head>
