@@ -3,8 +3,8 @@ import React, { useContext } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { AuthContext } from '@/context/AuthContextProvider';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 import Link from 'next/link'; // 'a' ট্যাগ এর বদলে Link ব্যবহার করা ভালো
+import Swal from 'sweetalert2';
 
 const RegisterForm = () => {
   const {
@@ -27,6 +27,8 @@ const RegisterForm = () => {
   }
 
   // --- ইমেইল ও পাসওয়ার্ড দিয়ে রেজিস্ট্রেশন ---
+
+  // --- Email/Password Registration ---
   const handleRegisterAuthCreate = async e => {
     e.preventDefault();
     const name = e.target.name.value;
@@ -37,56 +39,94 @@ const RegisterForm = () => {
       name
     )}&background=random`;
 
-    // পাসওয়ার্ড ভ্যালিডেশন
+    // Password Validations with SweetAlert2
     if (password.length < 6) {
-      toast.error('Password must be 6+ characters');
+      Swal.fire({
+        icon: 'error',
+        title: 'Short Password',
+        text: 'Password must be at least 6 characters long.',
+        confirmButtonColor: '#fb7b53',
+      });
       return;
     }
     if (!/[A-Z]/.test(password)) {
-      toast.error('Must include at least one uppercase letter');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Include at least one uppercase letter.',
+        confirmButtonColor: '#fb7b53',
+      });
       return;
     }
     if (!/[a-z]/.test(password)) {
-      toast.error('Must include at least one lowercase letter');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Include at least one lowercase letter.',
+        confirmButtonColor: '#fb7b53',
+      });
       return;
     }
 
     try {
-      // ১. ফায়ারবেসে ইউজার তৈরি করা
       const result = await registerAuthCreate(email, password);
-
-      // ২. ইউজারের নাম ও ছবি আপডেট করা
       await updateUserProfile({ displayName: name, photoURL: photo });
 
-      // ৩. ব্রাউজারে কুকি সেট করা (Middleware এর জন্য)
+      // Set Cookie for Middleware
       document.cookie = 'auth=true; path=/; max-age=86400';
 
-      // ৪. গ্লোবাল স্টেট আপডেট করা
       setUser({ ...result.user, displayName: name, photoURL: photo });
 
-      toast.success('Registration successful!');
+      // Success Message
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful!',
+        text: 'Welcome to pawMart family.',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       e.target.reset();
-      router.push('/pets'); // সাকসেস হলে আইটেম লিস্ট পেজে রিডাইরেক্ট
+      router.push('/pets');
     } catch (err) {
       console.error(err);
-      toast.error(err.message || 'Registration failed. Try again.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: err.message || 'Something went wrong. Please try again.',
+        confirmButtonColor: '#fb7b53',
+      });
     }
   };
 
-  // --- গুগল দিয়ে সাইন আপ ---
+  // --- Google Sign Up ---
   const handleGoogleAuthUser = async () => {
     try {
       const result = await googleLogin();
 
-      // কুকি সেট করা
+      // Set Cookie for Middleware
       document.cookie = 'auth=true; path=/; max-age=86400';
 
       setUser(result.user);
-      toast.success('Google Sign Up successful!');
+
+      // Success Message
+      Swal.fire({
+        icon: 'success',
+        title: 'Google Sign In Successful!',
+        text: 'Redirecting to pet list...',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
       router.push('/pets');
     } catch (err) {
       console.error(err);
-      toast.error(err.message || 'Google Sign Up failed.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Sign In Failed',
+        text: err.message || 'Google Sign Up failed.',
+        confirmButtonColor: '#fb7b53',
+      });
     }
   };
 

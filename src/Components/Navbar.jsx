@@ -10,12 +10,8 @@ const Navbar = () => {
   const handleLogout = () => {
     signOutAuthUser()
       .then(() => {
-        // ১. কুকি ডিলিট করা
         document.cookie =
           'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        console.log('Logged out and cookie cleared');
-
-        // ২. হোম পেজে রিডাইরেক্ট করা
         window.location.href = '/';
       })
       .catch(error => console.log(error));
@@ -31,7 +27,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Links */}
-        <ul className="hidden lg:flex space-x-8 font-medium text-gray-200">
+        <ul className="hidden lg:flex items-center space-x-8 font-medium text-gray-200">
           <li>
             <Link className="hover:text-orange-500 transition-colors" href="/">
               Home
@@ -43,14 +39,6 @@ const Navbar = () => {
               href="/pets"
             >
               Pets & Supplies
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="hover:text-orange-500 transition-colors"
-              href="/contact"
-            >
-              Contact us
             </Link>
           </li>
 
@@ -74,36 +62,39 @@ const Navbar = () => {
               </li>
             </>
           )}
+
+          <li>
+            <Link
+              className="hover:text-orange-500 transition-colors"
+              href="/contact"
+            >
+              Contact us
+            </Link>
+          </li>
         </ul>
 
         {/* Desktop Auth Section */}
         <div className="hidden lg:flex items-center space-x-4">
           {!user ? (
-            <>
-              <Link
-                href="/login"
-                className="text-white hover:text-orange-500 transition px-4 py-2"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full transition-all shadow-md active:scale-95"
-              >
-                Register
-              </Link>
-            </>
+            <Link
+              href="/login"
+              className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-2 rounded-full transition-all shadow-md active:scale-95 font-semibold"
+            >
+              Login
+            </Link>
           ) : (
             <div className="flex items-center gap-4">
-              {/* User Info (ছবি এবং নাম দেখানো) */}
               <div className="flex items-center gap-2 pr-2 border-r border-white/10">
                 <img
-                  src={user?.photoURL || 'https://i.ibb.co/3S3m6vC/admin.png'}
+                  src={
+                    user?.photoURL ||
+                    'https://i.ibb.co.com/kZM1hPc/home3-hero.webp'
+                  }
                   alt="profile"
                   className="w-9 h-9 rounded-full border border-orange-500 object-cover"
                 />
                 <span className="text-sm text-gray-200 font-medium hidden xl:block">
-                  {user?.displayName || 'User'}
+                  {user?.displayName || 'Admin'}
                 </span>
               </div>
 
@@ -141,12 +132,14 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10 p-6 flex flex-col space-y-4 shadow-2xl animate-in slide-in-from-top duration-300">
-          {/* Mobile User Info */}
+        <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10 p-6 flex flex-col space-y-4 shadow-2xl">
           {user && (
             <div className="flex items-center gap-3 mb-2 p-3 bg-white/5 rounded-xl">
               <img
-                src={user?.photoURL || 'https://i.ibb.co/3S3m6vC/admin.png'}
+                src={
+                  user?.photoURL ||
+                  'https://i.ibb.co.com/kZM1hPc/home3-hero.webp'
+                }
                 alt="profile"
                 className="w-10 h-10 rounded-full border border-orange-500"
               />
@@ -162,21 +155,41 @@ const Navbar = () => {
           <Link
             onClick={() => setOpen(false)}
             href="/"
-            className="text-lg text-white hover:text-orange-500"
+            className="text-lg text-white"
           >
             Home
           </Link>
           <Link
             onClick={() => setOpen(false)}
             href="/pets"
-            className="text-lg text-white hover:text-orange-500"
+            className="text-lg text-white"
           >
             Pets & Supplies
           </Link>
+
+          {user && (
+            <>
+              <Link
+                onClick={() => setOpen(false)}
+                href="/addListing"
+                className="text-lg text-white"
+              >
+                Add Product
+              </Link>
+              <Link
+                onClick={() => setOpen(false)}
+                href="/myListing"
+                className="text-lg text-white"
+              >
+                Manage Products
+              </Link>
+            </>
+          )}
+
           <Link
             onClick={() => setOpen(false)}
             href="/contact"
-            className="text-lg text-white hover:text-orange-500"
+            className="text-lg text-white"
           >
             Contact us
           </Link>
@@ -184,45 +197,20 @@ const Navbar = () => {
           <hr className="border-white/10" />
 
           {user ? (
-            <>
-              <Link
-                onClick={() => setOpen(false)}
-                href="/addListing"
-                className="text-white hover:text-orange-500"
-              >
-                Add Product
-              </Link>
-              <Link
-                onClick={() => setOpen(false)}
-                href="/myListing"
-                className="text-white hover:text-orange-500"
-              >
-                Manage Products
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="w-full py-3 bg-red-600/20 text-red-500 border border-red-600/30 rounded-xl font-semibold mt-4"
-              >
-                Logout
-              </button>
-            </>
+            <button
+              onClick={handleLogout}
+              className="w-full py-3 bg-red-600/20 text-red-500 border border-red-600/30 rounded-xl font-semibold mt-4"
+            >
+              Logout
+            </button>
           ) : (
-            <div className="flex flex-col space-y-3">
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="w-full text-center py-3 bg-white/5 text-white rounded-xl border border-white/10"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                onClick={() => setOpen(false)}
-                className="w-full text-center py-3 bg-orange-600 text-white rounded-xl font-bold"
-              >
-                Register
-              </Link>
-            </div>
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="w-full text-center py-3 bg-orange-600 text-white rounded-xl font-bold"
+            >
+              Login
+            </Link>
           )}
         </div>
       )}

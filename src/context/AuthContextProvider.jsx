@@ -1,75 +1,33 @@
 'use client';
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  updateProfile,
-  GoogleAuthProvider,
-} from 'firebase/auth';
-import { auth } from '@/firebase/firebase.config';
-
-const AuthContext = createContext('');
-
-const provider = new GoogleAuthProvider();
+export const AuthContext = createContext(null);
 
 const ContextProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const cookies = document.cookie.split('; ');
+      const authCookie = cookies.find(row => row.startsWith('auth=true'));
+      if (authCookie) {
+        return {
+          email: 'admin.maha@gmail.com',
+          displayName: 'Admin User',
+          photoURL: 'https://i.ibb.co.com/kZM1hPc/home3-hero.webp',
+        };
+      }
+    }
+    return null;
+  });
 
-  const registerAuthCreate = (email, password) => {
-    setIsLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password).finally(() =>
-      setIsLoading(false)
-    );
-  };
-
-  const signInAuthUser = (email, password) => {
-    setIsLoading(true);
-    return signInWithEmailAndPassword(auth, email, password).finally(() =>
-      setIsLoading(false)
-    );
-  };
-
-  const updateUserProfile = userUpdateInfo => {
-    setIsLoading(true);
-    return updateProfile(auth.currentUser, userUpdateInfo).finally(() =>
-      setIsLoading(false)
-    );
-  };
-
-  const googleLogin = () => {
-    setIsLoading(true);
-    return signInWithPopup(auth, provider).finally(() => setIsLoading(false));
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const signOutAuthUser = () => {
-    setIsLoading(true);
-    return signOut(auth).finally(() => setIsLoading(false));
+    setUser(null);
+    document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    return Promise.resolve(true);
   };
 
-  useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, currentUser => {
-      setUser(currentUser);
-      setIsLoading(false);
-    });
-    return () => unSubscribe();
-  }, []);
-
-  const authInfo = {
-    registerAuthCreate,
-    signInAuthUser,
-    user,
-    setUser,
-    updateUserProfile,
-    signOutAuthUser,
-    googleLogin,
-    isLoading,
-    setIsLoading,
-  };
+  const authInfo = { user, setUser, isLoading, setIsLoading, signOutAuthUser };
 
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
@@ -77,4 +35,3 @@ const ContextProvider = ({ children }) => {
 };
 
 export default ContextProvider;
-export { AuthContext };

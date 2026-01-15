@@ -1,75 +1,53 @@
 'use client';
-import React, { useContext } from 'react';
-import { toast } from 'react-toastify';
-import { FcGoogle } from 'react-icons/fc';
-import { AuthContext } from '@/context/AuthContextProvider';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 const LoginForm = () => {
-  const { signInAuthUser, googleLogin, setUser, isLoading } =
-    useContext(AuthContext);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async e => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-
-    // --- ১. Mock Login Functionality ---
-    if (email === 'admin.maha@gmail.com' && password === '123456') {
-      document.cookie = 'auth=true; path=/; max-age=86400';
-
-      setUser({
-        email: 'admin.maha@gmail.com',
-        displayName: 'Admin User',
-        photoURL: 'https://i.ibb.co.com/kZM1hPc/home3-hero.webp',
-      });
-
-      toast.success('Admin Login successful!');
-      router.push('/pets');
-      return;
-    }
-
-    // --- ২. Firebase Login Functionality ---
-    try {
-      const result = await signInAuthUser(email, password);
-
-      document.cookie = 'auth=true; path=/; max-age=86400';
-
-      setUser(result.user);
-      toast.success('Login successful!');
-      router.push('/pets');
-    } catch (err) {
-      console.error(err);
-      let message = 'Something went wrong. Please try again.';
-
-      // Firebase specific error messages
-      if (
-        err.code === 'auth/user-not-found' ||
-        err.code === 'auth/invalid-credential'
-      ) {
-        message = 'Invalid email or password.';
-      } else if (err.code === 'auth/wrong-password') {
-        message = 'Incorrect password.';
-      }
-
-      toast.error(message);
+  // --- ১. Auto-fill Function ---
+  const handleAutoFill = () => {
+    const emailField = document.querySelector('input[name="email"]');
+    const passwordField = document.querySelector('input[name="password"]');
+    if (emailField && passwordField) {
+      emailField.value = 'admin.maha@gmail.com';
+      passwordField.value = '123456';
     }
   };
 
-  const handleGoogleAuthUser = async () => {
-    try {
-      const result = await googleLogin();
+  // --- ২. Login Handler (Direct Mock Logic) ---
+  const handleLogin = async e => {
+    e.preventDefault();
+    setIsLoading(true);
 
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    if (email === 'admin.maha@gmail.com' && password === '123456') {
       document.cookie = 'auth=true; path=/; max-age=86400';
 
-      setUser(result.user);
-      toast.success('Google SignIn successful!');
-      router.push('/pets');
-    } catch (error) {
-      console.error(error);
-      toast.error(error.message || 'Google Sign In failed');
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful!',
+        text: 'Welcome back, Admin!',
+        timer: 1000,
+        showConfirmButton: false,
+      });
+
+      setTimeout(() => {
+        window.location.href = '/pets';
+      }, 1000);
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: 'Invalid email or password.',
+        confirmButtonColor: '#fb7b53',
+      });
+      setIsLoading(false);
     }
   };
 
@@ -114,10 +92,10 @@ const LoginForm = () => {
 
         <button
           type="button"
-          onClick={handleGoogleAuthUser}
-          className="flex items-center justify-center gap-2 border border-gray-300 rounded-lg p-3 text-slate-950 hover:bg-gray-100 transition-all active:scale-95 shadow-sm"
+          onClick={handleAutoFill}
+          className="flex items-center justify-center gap-2 border-2 border-[#fb7b53] border-dashed rounded-lg p-3 text-[#fb7b53] hover:bg-[#fb7b53] hover:text-white cursor-pointer font-semibold transition-all active:scale-95 shadow-sm"
         >
-          <FcGoogle size={24} /> Login with Google
+          Auto-fill Mock Admin
         </button>
       </form>
 
