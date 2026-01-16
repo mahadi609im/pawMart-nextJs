@@ -1,6 +1,6 @@
 # PawMart - Pet Adoption & Supplies Platform
 
-**Live Site:** [PawMart on Vercel](https://paw-mart-server-smoky.vercel.app/)  
+**Live Site:** [PawMart on Vercel](https://paw-mart-next-js.vercel.app/)  
 **Server API:**
 [Express Server on Vercel](https://paw-mart-server-smoky.vercel.app/)
 
