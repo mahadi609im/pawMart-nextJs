@@ -1,32 +1,51 @@
 'use client';
 
-import React, { useContext, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Head from 'next/head';
-import listingsFormBg from '../../assets/listingsFormBg.webp';
 import listingsFormBanner from '../../assets/ListingFormBanner.webp';
 import paw from '../../assets/paw.png';
 import paw2 from '../../assets/paw2.png';
 import { toast } from 'react-toastify';
-import { AuthContext } from '@/context/AuthContextProvider';
 import Swal from 'sweetalert2';
 
 const AddListingsForm = () => {
-  const { user } = useContext(AuthContext);
   const [category, setCategory] = useState('');
   const [myListings, setMyListings] = useState([]);
+  const [userEmail, setUserEmail] = useState('');
+
+  // ১. ইউজার কুকি থেকে ইমেইল রিড করা (Mock User Logic)
+  useEffect(() => {
+    const checkAuth = () => {
+      const isAuth = document.cookie.includes('auth=true');
+      if (isAuth) {
+        // Mock Admin Email সেট করা হচ্ছে
+        setUserEmail('admin.maha@gmail.com');
+      } else {
+        setUserEmail('');
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleAddListings = e => {
     e.preventDefault();
+
+    // ইউজার যদি লগইন না থাকে তবে ডাটা সাবমিট করতে দিবে না
+    if (!userEmail) {
+      toast.error('Please login first to add a listing');
+      return;
+    }
+
     const form = e.target;
     const newListing = {
       name: form.name.value,
       category,
-      price: form.price.value,
+      price: parseFloat(form.price.value) || 0,
       location: form.location.value,
       image: form.image.value,
       date: form.date.value,
-      email: form.email.value,
+      email: userEmail, // মক ইমেইল ব্যবহার করা হয়েছে
       description: form.description.value,
     };
 
@@ -41,17 +60,23 @@ const AddListingsForm = () => {
           form.reset();
           setCategory('');
           toast.success('New Listing Added Successfully');
+
+          // লোকাল স্টেটে লিস্ট আপডেট করা যাতে ইউজার সাথে সাথে প্রিভিউ দেখে
           setMyListings(prev => [
             ...prev,
             { ...newListing, _id: data.insertedId },
           ]);
 
           Swal.fire({
-            title: 'Product Added Succesfully',
+            title: 'Product Added Successfully',
             icon: 'success',
-            draggable: false,
+            confirmButtonColor: '#fb7b53',
           });
         }
+      })
+      .catch(error => {
+        console.error('Error adding listing:', error);
+        toast.error('Something went wrong. Please try again.');
       });
   };
 
@@ -97,7 +122,7 @@ const AddListingsForm = () => {
                 name="name"
                 required
                 placeholder="Product / Pet Name"
-                className="rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
+                className="rounded-lg p-3 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
               />
 
               <select
@@ -105,7 +130,7 @@ const AddListingsForm = () => {
                 required
                 value={category}
                 onChange={e => setCategory(e.target.value)}
-                className="rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
+                className="rounded-lg p-3 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
               >
                 <option disabled value="">
                   Category
@@ -120,8 +145,8 @@ const AddListingsForm = () => {
                 type="number"
                 name="price"
                 required={category !== 'Pets'}
-                placeholder="Price (0 if pet)"
-                className="rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
+                placeholder="Price (0 if free)"
+                className="rounded-lg p-3 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
               />
 
               <input
@@ -129,7 +154,7 @@ const AddListingsForm = () => {
                 name="location"
                 required
                 placeholder="Location"
-                className="rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
+                className="rounded-lg p-3 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
               />
 
               <input
@@ -137,22 +162,22 @@ const AddListingsForm = () => {
                 name="image"
                 required
                 placeholder="Image URL"
-                className="rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
+                className="rounded-lg p-3 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
               />
 
               <input
                 type="date"
                 name="date"
                 required
-                className="rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
+                className="rounded-lg p-3 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
               />
 
               <input
                 type="email"
                 name="email"
-                value={user?.email || ''}
+                value={userEmail || 'Not Logged In'}
                 readOnly
-                className="rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none cursor-not-allowed focus:outline-none"
+                className="rounded-lg p-3 bg-[#fb7a531a] text-gray-500 border-none cursor-not-allowed focus:outline-none"
               />
             </div>
 
@@ -160,63 +185,55 @@ const AddListingsForm = () => {
               name="description"
               placeholder="Description"
               required
-              className="w-full mt-4 h-32 rounded-lg p-2 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
+              className="w-full mt-4 h-32 rounded-lg p-3 bg-[#fb7a5331] text-slate-950 border-none focus:outline-none"
             ></textarea>
 
-            <button className="bg-orange-400 text-white px-6 py-2 rounded-lg mt-4 hover:bg-orange-500 transition">
+            <button className="bg-[#fb7b53] text-white font-bold px-8 py-3 rounded-lg mt-4 hover:bg-orange-600 transition shadow-md active:scale-95">
               Add Pet/Product
             </button>
           </form>
 
           {/* Paw Decoration */}
-          <span className="absolute bottom-4 right-4 w-8 h-8 opacity-40">
+          <span className="absolute bottom-4 right-4 w-12 h-12 opacity-20">
             <Image src={paw} alt="paw" fill style={{ objectFit: 'contain' }} />
           </span>
         </div>
       </div>
 
-      {/* Show dynamically added listings */}
+      {/* Show dynamically added listings preview */}
       {myListings.length > 0 && (
-        <div className="container mx-auto px-[3%] md:px-0 mt-10">
-          <h3 className="text-xl font-bold text-[#fb7b53] mb-4">
-            My Added Listings
+        <div className="container mx-auto px-6 mt-16">
+          <h3 className="text-2xl font-bold text-[#fb7b53] mb-6 flex items-center gap-3">
+            Recently Added Preview
+            <span className="h-[2px] flex-1 bg-gray-100"></span>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {myListings.map(item => (
               <div
                 key={item._id}
-                className="border border-dashed border-[#fb7b53] rounded-xl p-4 shadow hover:shadow-lg transition-all bg-[#fb7a5331]"
+                className="border border-[#fb7a5331] rounded-2xl p-5 shadow-sm bg-white hover:shadow-md transition-all"
               >
-                <div className="flex items-center gap-4">
-                  {item.image && (
-                    <div className="w-20 h-20 relative rounded-lg border border-dashed border-[#fb7b53] overflow-hidden">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex flex-col space-y-1 text-slate-800">
-                    <h3 className="text-lg font-bold">{item.name}</h3>
-                    <p>
-                      <span className="font-semibold text-[#fb7b53]">
-                        Category:
-                      </span>{' '}
+                <div className="flex gap-4">
+                  <div className="w-24 h-24 relative rounded-xl overflow-hidden border border-gray-100">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1 justify-center">
+                    <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
+                      {item.name}
+                    </h3>
+                    <p className="text-xs font-semibold text-orange-500 uppercase tracking-wider">
                       {item.category}
                     </p>
-                    <p>
-                      <span className="font-semibold text-[#fb7b53]">
-                        Price:
-                      </span>{' '}
+                    <p className="font-bold text-gray-800">
                       {item.price === 0 ? 'Free Adoption' : `৳${item.price}`}
                     </p>
-                    <p>
-                      <span className="font-semibold text-[#fb7b53]">
-                        Location:
-                      </span>{' '}
-                      {item.location}
+                    <p className="text-xs text-gray-400 italic flex items-center gap-1">
+                      📍 {item.location}
                     </p>
                   </div>
                 </div>

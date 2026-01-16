@@ -1,21 +1,41 @@
 'use client';
-import { AuthContext } from '@/context/AuthContextProvider';
 import Link from 'next/link';
-import { useState, useContext } from 'react';
+import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { user, signOutAuthUser } = useContext(AuthContext);
+  const [user, setUser] = useState(null);
 
+  // ১. পেজ লোড হলে এবং প্রতি ১ সেকেন্ড পর পর চেক করা ইউজার লগইন আছে কি না
+  useEffect(() => {
+    const checkUser = () => {
+      const isAuth = document.cookie.includes('auth=true');
+      if (isAuth) {
+        // মক ইউজার ডাটা সেট করা হচ্ছে
+        setUser({
+          displayName: 'Admin',
+          photoURL: 'https://i.ibb.co.com/kZM1hPc/home3-hero.webp',
+          email: 'admin.maha@gmail.com',
+        });
+      } else {
+        setUser(null);
+      }
+    };
+
+    checkUser(); // সাথে সাথে চেক করবে
+    const interval = setInterval(checkUser, 1000); // কুকি চেঞ্জ হলে আপডেট করার জন্য
+    return () => clearInterval(interval);
+  }, []);
+
+  // ২. লগআউট হ্যান্ডলার (সম্পূর্ণ Mock Logic)
   const handleLogout = () => {
-    signOutAuthUser()
-      .then(() => {
-        document.cookie =
-          'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        window.location.href = '/';
-      })
-      .catch(error => console.log(error));
+    // কুকি ডিলিট করার নিয়ম (expire date অতীতে সেট করা)
+    document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    setUser(null);
     setOpen(false);
+
+    // হোম পেজে পাঠিয়ে হার্ড রিলোড দেওয়া যাতে স্টেট ক্লিয়ার হয়
+    window.location.href = '/';
   };
 
   return (
@@ -42,6 +62,7 @@ const Navbar = () => {
             </Link>
           </li>
 
+          {/* ইউজার লগইন থাকলে এই লিঙ্কগুলো দেখা যাবে */}
           {user && (
             <>
               <li>
@@ -63,6 +84,7 @@ const Navbar = () => {
             </>
           )}
 
+          {/* Contact us সবসময় শেষে থাকবে */}
           <li>
             <Link
               className="hover:text-orange-500 transition-colors"
@@ -86,15 +108,12 @@ const Navbar = () => {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 pr-2 border-r border-white/10">
                 <img
-                  src={
-                    user?.photoURL ||
-                    'https://i.ibb.co.com/kZM1hPc/home3-hero.webp'
-                  }
+                  src={user.photoURL}
                   alt="profile"
                   className="w-9 h-9 rounded-full border border-orange-500 object-cover"
                 />
                 <span className="text-sm text-gray-200 font-medium hidden xl:block">
-                  {user?.displayName || 'Admin'}
+                  {user.displayName}
                 </span>
               </div>
 
@@ -132,22 +151,19 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10 p-6 flex flex-col space-y-4 shadow-2xl">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10 p-6 flex flex-col space-y-4 shadow-2xl animate-in slide-in-from-top duration-300">
           {user && (
             <div className="flex items-center gap-3 mb-2 p-3 bg-white/5 rounded-xl">
               <img
-                src={
-                  user?.photoURL ||
-                  'https://i.ibb.co.com/kZM1hPc/home3-hero.webp'
-                }
+                src={user.photoURL}
                 alt="profile"
                 className="w-10 h-10 rounded-full border border-orange-500"
               />
               <div className="flex flex-col">
                 <span className="text-white font-medium">
-                  {user?.displayName}
+                  {user.displayName}
                 </span>
-                <span className="text-xs text-gray-400">{user?.email}</span>
+                <span className="text-xs text-gray-400">{user.email}</span>
               </div>
             </div>
           )}
@@ -189,12 +205,10 @@ const Navbar = () => {
           <Link
             onClick={() => setOpen(false)}
             href="/contact"
-            className="text-lg text-white"
+            className="text-lg text-white border-b border-white/5 pb-2"
           >
             Contact us
           </Link>
-
-          <hr className="border-white/10" />
 
           {user ? (
             <button

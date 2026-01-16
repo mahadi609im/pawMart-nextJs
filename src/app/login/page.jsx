@@ -3,7 +3,6 @@ import Image from 'next/image';
 
 import paw from '../../assets/paw.png';
 import paw2 from '../../assets/paw2.png';
-import { AuthContext } from '@/context/AuthContextProvider';
 import LoginForm from '@/Components/LoginForm/LoginForm';
 
 const Login = () => {
