@@ -27,7 +27,7 @@ To access the protected features (Add Product, Manage Products), use the
 following credentials:
 
 - **Email:** `admin.maha@gmail.com`
-- **Password:** `admin123`
+- **Password:** `123456`
 
 ---
 
@@ -63,7 +63,7 @@ following credentials:
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/your-username/pawmart.git](https://github.com/your-username/pawmart.git)
+    git clone [https://github.com/mahadi609im/pawMart-nextJs.git](https://github.com/mahadi609im/pawMart-nextJs.git)
     cd pawmart
     ```
 
